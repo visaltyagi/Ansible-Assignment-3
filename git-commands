@@ -1,0 +1,37 @@
+cd /etc/ansible
+ls
+cd roles
+sudo ansible-galaxy init apache2
+sudo ansible-galaxy init nginx
+cd apache2
+ls
+cd tasks
+sudo nano install.yaml
+- name: installing apache2
+apt: name=apache2 update-cache=yes state=latest
+sudo nano main.yaml
+–include_tasks: install.yaml
+cd ..
+cd nginx
+ls
+cd tasks
+sudo nano install.yaml
+- name: install nginx
+apt: name=nginx update-cache=yes state=latest
+–include_tasks: install.yaml
+cd /etc/ansible
+sudo nano play3.yaml
+---
+- name: installing apache2 on slave1
+hosts: Slave1
+become: true
+roles:
+- apache2
+- name: install nginx on slave2
+hosts: Slave2
+become: true
+roles:
+- nginx
+ansible-playbook play3.yaml --syntax-check
+ansible-playbook play3.yaml --check
+ansible-playbook play3.yaml
